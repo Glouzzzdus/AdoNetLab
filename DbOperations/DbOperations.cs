@@ -10,17 +10,51 @@ namespace DbOperations
         public List<Product> GetAllProducts()
         {
             var products = new List<Product>();
-
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
 
-                using (SqlCommand command = new SqlCommand("SELECT * FROM Product", connection))
+                string sqlQuery = "SELECT * FROM Product";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
                 {
                     SqlDataReader reader = command.ExecuteReader();
+
                     while (reader.Read())
                     {
-                        var product = new Product
+                        products.Add(new Product
+                        {
+                            Id = (int)reader["Id"],
+                            Name = reader["Name"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Weight = (double)reader["Weight"],
+                            Height = (double)reader["Height"],
+                            Width = (double)reader["Width"],
+                            Length = (double)reader["Length"]
+                        });
+                    }
+                }
+            }
+            return products;
+        }
+
+        public Product GetProduct(int productId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                string sqlQuery = "SELECT * FROM Product WHERE Id = @Id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", productId);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        return new Product
                         {
                             Id = (int)reader["Id"],
                             Name = reader["Name"].ToString(),
@@ -30,13 +64,44 @@ namespace DbOperations
                             Width = (double)reader["Width"],
                             Length = (double)reader["Length"]
                         };
-
-                        products.Add(product);
                     }
                 }
             }
 
-            return products;
+            return null;
+        }
+
+        public Order GetOrder(int orderId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                string sqlQuery = "SELECT * FROM Order WHERE Id = @Id";
+
+                using (SqlCommand command = new SqlCommand(sqlQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", orderId);
+
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        var product = GetProduct((int)reader["ProductId"]);
+
+                        return new Order
+                        {
+                            Id = (int)reader["Id"],
+                            Status = (Status)Enum.Parse(typeof(Status), reader["Status"].ToString()),
+                            CreateDate = (DateTime)reader["CreateDate"],
+                            UpdateDate = (DateTime)reader["UpdateDate"],
+                            Product = product
+                        };
+                    }
+                }
+            }
+
+            return null;//I don't like it. But I have no idea what I should have instead.
         }
 
         public void AddProduct(Product product)
