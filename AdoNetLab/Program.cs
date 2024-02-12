@@ -1,2 +1,10 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using DbOperations;
+
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var sqlDatabaseAccess = new SqlDatabaseAccess("Server=(local);Database=AdoNetLab;Integrated Security=true;");
+        var dbOperations = new DbOperations.DbOperations(sqlDatabaseAccess);
+    }
+}
