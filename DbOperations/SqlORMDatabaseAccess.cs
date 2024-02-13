@@ -1,11 +1,7 @@
 ﻿using Dapper;
 using Database;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace DbOperations
 {
@@ -27,12 +23,12 @@ namespace DbOperations
                 }
 
                 var sqlQuery = "INSERT INTO Order (Status, CreateDate, UpdateDate, ProductId) VALUES (@Status, @CreateDate, @UpdateDate, @ProductId)";
-                string status = Enum.GetName(order.Status);
+                string? status = Enum.GetName(order.Status);
                 connection.Execute(sqlQuery, new
                 {
                     Status = status,
-                    CreatedDate = order.CreateDate,
-                    UpdateDate = order.UpdateDate,
+                    order.CreateDate,
+                    order.UpdateDate,
                     ProductId = order.Product.Id
                 });
             }
@@ -46,12 +42,12 @@ namespace DbOperations
                                "VALUES (@Name, @Description, @Weight, @Height, @Width, @Length)";
                 connection.Execute(sqlQuery, new
                 {
-                    Name = product.Name,
-                    Description = product.Description,
-                    Weight = product.Weight,
-                    Height = product.Height,
-                    Width = product.Width,
-                    Length = product.Length
+                    product.Name,
+                    product.Description,
+                    product.Weight,
+                    product.Height,
+                    product.Width,
+                    product.Length
                 });
             }
         }
@@ -112,10 +108,10 @@ namespace DbOperations
                 var affectedRow = connection.Execute(sqlQuery, new
                 {
                     Status = order.Status.ToString(),
-                    CreatedDate = order.CreateDate,
-                    UpdateDate = order.UpdateDate,
+                    order.CreateDate,
+                    order.UpdateDate,
                     ProductId = order.Product.Id,
-                    Id = order.Id
+                    order.Id
                 });
             }
         }
@@ -126,13 +122,13 @@ namespace DbOperations
                 var sqlQuery = "UPDATE Product SET Name = @Name, Description = @Description, Weight = @Weight, Height = @Height, Width = @Width, Length = @Length WHERE Id = @Id";
                 connection.Execute(sqlQuery, new
                 {
-                    Name = product.Name,
-                    Description = product.Description,
-                    Weight = product.Weight,
-                    Height = product.Height,
-                    Width = product.Width,
-                    Length = product.Length,
-                    Id = product.Id
+                    product.Name,
+                    product.Description,
+                    product.Weight,
+                    product.Height,
+                    product.Width,
+                    product.Length,
+                    product.Id
                 });
             }
         }
